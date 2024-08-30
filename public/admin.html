@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Users Information</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<h2>All Users Information</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Full Name</th>
+      <th>Email</th>
+      <th>Number</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="user-table-body">
+    <!-- User rows will be dynamically inserted here -->
+  </tbody>
+</table>
+
+<script>
+  // Function to fetch all users and display them in the table
+  async function fetchUsers() {
+    try {
+      const response = await fetch('/users');
+      if (!response.ok) throw new Error('Failed to fetch users data');
+
+      const users = await response.json();
+      displayUsers(users);
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('user-table-body').innerHTML = '<tr><td colspan="4">Error fetching user data</td></tr>';
+    }
+  }
+
+  // Function to render users' data in the table
+  function displayUsers(users) {
+    const tableBody = document.getElementById('user-table-body');
+    tableBody.innerHTML = '';
+
+    users.forEach(user => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+      <td>${user.fullName}</td>
+      <td>${user.email}</td>
+      <td>${user.number}</td>
+        <td><button onclick="viewPdf('${user._id}')">View PDF</button></td>
+      `;
+      console.log(user.number);
+      
+      tableBody.appendChild(row);
+    });
+  }
+
+  // Function to view a specific user's PDF
+  function viewPdf(userId) {
+    window.open(`/user/pdf/${userId}`, '_blank');
+  }
+
+  // Fetch and display all users when the page loads
+  fetchUsers();
+</script>
+
+</body>
+</html>
